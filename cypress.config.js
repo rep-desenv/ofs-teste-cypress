@@ -7,8 +7,10 @@ module.exports = defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
       config = dotenvPlugin(config)
+      
       config.env.USUARIO = process.env.USUARIO
       config.env.SENHA = process.env.SENHA
+
       return config
     },
     chromeWebSecurity: false
