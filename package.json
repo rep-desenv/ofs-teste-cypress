@@ -5,13 +5,15 @@
   "main": "index.js",
   "scripts": {
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:run": "cypress run",
+    "cypress:parallel":"cypress-parallel -s cypress:run -t 2 -d 'cypress\\e2e' "
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "cypress": "^13.6.3",
     "cypress-dotenv": "^2.0.0",
+    "cypress-parallel": "^0.14.0",
     "dotenv": "^16.4.1"
   }
 }

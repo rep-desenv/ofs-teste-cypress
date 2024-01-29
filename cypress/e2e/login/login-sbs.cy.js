@@ -1,13 +1,13 @@
 /// <reference types="cypress"/>
 
 context('Oracle Field Service',()=>{
-    beforeEach(() => {        
+    beforeEach(() => {              
         cy.visit('https://equatorialenergia2.test.etadirect.com/mobility/')  
         cy.get('#welcome-message').should('contain.text','Bem-vindo a equatorialenergia2.test')
     })
 
     describe('Login', () => {
-        
+
         const usuario = Cypress.env('USUARIO')
         const senha = Cypress.env('SENHA')
         
