@@ -52,7 +52,9 @@ module.exports = defineConfig({
   
       on('before:spec', (spec) => {
         /* ... */
-        console.log('$$$$$$$',spec)
+        if (process.env.SAVE_RESULTS.toLocaleLowerCase() == 'true'){
+          console.log('$$$$$$$',spec)
+        }
       })
 
       // implement node event listeners here
