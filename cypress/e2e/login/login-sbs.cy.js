@@ -63,7 +63,8 @@ context('Oracle Field Service',()=>{
         it('Login de Usuário Válido.', () => {
             cy.get('#username').type(`${usuario}`)
             cy.get('#password').type(`${senha}`)
-            cy.get('#sign-in').click()            
+            cy.get('#sign-in').click()
+            cy.wait(2000)            
             cy.get('button.user-menu').should('exist')
         });
     
@@ -85,6 +86,7 @@ context('Oracle Field Service',()=>{
             cy.get('button.user-menu').should('exist')
             cy.get('button.user-menu').click()
             cy.get('[pos="2"] > .item-link').click()
+            cy.wait(2000)
             cy.get('#welcome-message').should('contain.text','Bem-vindo a equatorialenergia2.test')       
         });
     
