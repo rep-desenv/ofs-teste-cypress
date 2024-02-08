@@ -6,7 +6,7 @@ module.exports = defineConfig({
   e2e: {
     setupNodeEvents(on, config) {
       
-      //Aqui faço alguma ação após execução dos CT's
+      // //Aqui faço alguma ação após execução dos CT's
       // on('before:run', (details) => {
       //   /* ... */
       //   console.log('====>>>',details.specs)  
@@ -32,58 +32,119 @@ module.exports = defineConfig({
 
         
       on('after:spec', (spec, results) => {
-        /* ... */
-        
+              
         if (process.env.SAVE_RESULTS.toLocaleLowerCase() == 'true'){
 
-            var dados = {}
-              
-            console.log('#######################################################################################################################')
-            console.log( results.stats.duration )
-            console.log( results.stats.startedAt )
-            console.log( results.stats.endedAt )
-            console.log( results.stats.tests )
-            
-            for (let index = 0; index < results.tests.length; index++) {
-              console.log(results.tests[index].attempts[0].state,'===>>', index)
-              dados.state = results.tests[index].attempts[0].state
+            //Detail
+            var dadosDetail = {}
+            dadosDetail.file_name = results.spec.fileName
+            dadosDetail.absolute_path = results.spec.absolute
 
-              console.log(results.tests[index].displayError,'===>>', index)  
-              dados.display_error = results.tests[index].displayError
-
-              console.log(results.tests[index].duration,'===>>', index) 
-              dados.duration = results.tests[index].duration
-
-              for (let j = 0; j < results.tests[index].title.length; j++) {
-                console.log(results.tests[index].title[j],'===>>', index)  
-                dados.test_name = results.tests[index].title[j]          
-              }
-              
-              dados.id_stats = 23
-              
-              console.log(dados)
-
-              fetch('http://localhost:3000/tests', {
+            fetch('http://localhost:3000/detail', {
                 method: "POST",
                 body: JSON.stringify({
-                  "state": dados.state,
-                  "display_error": dados.display_error,
-                  "duration": dados.duration,
-                  "test_name": dados.test_name,
-                  "id_stats": dados.id_stats
+                  "file_name": dadosDetail.file_name,
+                  "absolute_path": dadosDetail.absolute_path
                 }),
                 headers: {"Content-type": "application/json; charset=UTF-8"}
               })
-              .then(response => response.json())
-              .then(json => console.log('executado',json))
-              .catch(err => console.log('erro', err))            
-            }                     
-            console.log('#######################################################################################################################')
-          }
+              .then(response => response.json())              
+              .then((json)=>{
+                    
+                    console.log('executado em detail',json)  
+
+                    //Reporter
+                    var reporterDados = {}
+                    reporterDados.suites = results.reporterStats.suites
+                    reporterDados.tests = results.reporterStats.tests
+                    reporterDados.passes = results.reporterStats.passes
+                    reporterDados.pending = results.reporterStats.pending
+                    reporterDados.failures = results.reporterStats.failures
+                    reporterDados.start = results.reporterStats.start
+                    reporterDados.end = results.reporterStats.end
+                    reporterDados.duration = results.reporterStats.duration
+                    reporterDados.id_detail = parseInt(json)
+
+                    fetch('http://localhost:3000/reporter', {
+                          method: "POST",
+                          body: JSON.stringify({
+                            "suites": reporterDados.suites,
+                            "tests": reporterDados.tests,
+                            "passes": reporterDados.passes,
+                            "pending": reporterDados.pending,
+                            "failures": reporterDados.failures,
+                            "start": reporterDados.start,
+                            "end": reporterDados.end,
+                            "duration": reporterDados.duration,
+                            "id_detail": reporterDados.id_detail
+                          }),
+                          headers: {"Content-type": "application/json; charset=UTF-8"}
+                    })
+                    .then(response => response.json())
+                    .then(json => console.log('executado em reporter',json))
+                    .catch(err => console.log('erro', err))
+
+
+                    //Stats
+                    var dadosStats = {}
+                    dadosStats.duration = results.stats.duration
+                    dadosStats.started_at = results.stats.startedAt
+                    dadosStats.ended_at = results.stats.endedAt
+                    dadosStats.qtd_tests = parseInt(results.stats.tests)
+                    dadosStats.id_datail = parseInt(json)
+
+                    fetch('http://localhost:3000/stats', {
+                        method: "POST",
+                        body: JSON.stringify({
+                          "duration": dadosStats.duration,
+                          "started_at": dadosStats.started_at,
+                          "ended_at": dadosStats.ended_at,
+                          "qtd_tests": dadosStats.qtd_tests,
+                          "id_datail": dadosStats.id_datail
+                        }),
+                        headers: {"Content-type": "application/json; charset=UTF-8"}
+                      })
+                      .then(response => response.json())
+                      .then((json)=>{
+
+                        console.log('executado em stats',json)
+                        
+                        //Tests
+                        var dados = {}            
+                        for (let index = 0; index < results.tests.length; index++) {
+                            dados.state = results.tests[index].attempts[0].state 
+                            dados.display_error = results.tests[index].displayError
+                            dados.duration = results.tests[index].duration
+
+                            for (let j = 0; j < results.tests[index].title.length; j++) {
+                              dados.test_name = results.tests[index].title[j]          
+                            }                
+                            dados.id_stats = parseInt(json)
+                            
+                            fetch('http://localhost:3000/tests', {
+                              method: "POST",
+                              body: JSON.stringify({
+                                "state": dados.state,
+                                "display_error": dados.display_error,
+                                "duration": dados.duration,
+                                "test_name": dados.test_name,
+                                "id_stats": dados.id_stats
+                              }),
+                              headers: {"Content-type": "application/json; charset=UTF-8"}
+                            })
+                            .then(response => response.json())
+                            .then(json => console.log('executado em tests',json))
+                            .catch(err => console.log('erro', err))            
+                        }
+                      })
+                      .catch(err => console.log('erro', err))
+              })
+              .catch(err => console.log('erro', err))             
+           }
           
       })
   
-      // on('before:spec', (spec) => {
+      // on('before:spec', (spec, results) => {
       //   /* ... */
       //   if (process.env.SAVE_RESULTS.toLocaleLowerCase() == 'true'){
       //     console.log('$$$$$$$',spec)
