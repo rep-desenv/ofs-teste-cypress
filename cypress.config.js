@@ -10,13 +10,11 @@ module.exports = defineConfig({
     setupNodeEvents(on, config) { 
       const idUnique = uuidv4()
       
-
-      //Aqui faço alguma ação após execução dos CT's
       on('before:run', (details) => {
         if (process.env.SAVE_RESULTS.toLocaleLowerCase() == 'true'){
 
         for (let index = 0; index < details.specs.length; index++) {                
-            //Detail
+            //Tests_Process
             var dadosTestsProcess = {}
             dadosTestsProcess.file_name = details.specs[index].fileName
             dadosTestsProcess.absolute_path = details.specs[index].absolute
@@ -51,7 +49,7 @@ module.exports = defineConfig({
               fetch(`http://localhost:3000/testsprocess/${idUnique}`, {
                 method: 'PUT',
                 body: JSON.stringify({
-                  "status_process": results.runs[index].reporterStats.failures > 0 ? 3 : 4,
+                  "status_process": results.runs[index].reporterStats.failures > 0 ? 2 : 3,
                   "file_name": results.runs[index].spec.fileName
                 }),
                 headers: {"Content-type": "application/json; charset=UTF-8"}                
@@ -60,7 +58,7 @@ module.exports = defineConfig({
               // .then((json)=>{
               //   console.log('atualizado em status_process',json) 
               // })
-              .then(json => console.log('atualizado em status_process [',results.runs[index].reporterStats.failures > 0 ? 3 : 4,']'))
+              .then(json => console.log('atualizado em status_process [',results.runs[index].reporterStats.failures > 0 ? 2 : 3,']'))
               .catch(err => console.log('erro', err))
             }    
 
@@ -107,7 +105,7 @@ module.exports = defineConfig({
                     fetch(`http://localhost:3000/testsprocess/${idUnique}`, {
                       method: "PUT",
                       body: JSON.stringify({
-                        "status_process": 2,
+                        "status_process": 1,
                         "file_name": dadosDetail.file_name
                       }),
                       headers: {"Content-type": "application/json; charset=UTF-8"}
@@ -116,7 +114,7 @@ module.exports = defineConfig({
                     // .then((json)=>{
                     //   console.log('atualizado em status_process',json) 
                     // })
-                    .then(json => console.log('atualizado em status_process [',2,']'))
+                    .then(json => console.log('atualizado em status_process [',1,']'))
                     .catch(err => console.log('erro', err))
 
                     //Stats
