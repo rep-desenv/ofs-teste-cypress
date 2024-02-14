@@ -1,0 +1,9 @@
+Trazer para dentro do before run test a geração do:
+    - plan_test
+        - detail
+
+        	id	file_name	status_process	created_at	absolute_path	id_plan_test
+
+Ajustar no after test:
+    - Em vez do post no detail, fazer um get e recuperar o 
+id_detail para dentro do fluxo stat

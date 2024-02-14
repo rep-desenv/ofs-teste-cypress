@@ -6,7 +6,7 @@
   "scripts": {
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "cypress:parallel":"cypress-parallel -s cypress:run -t 4 -d 'cypress\\e2e' "
+    "cypress:parallel": "cypress-parallel -s cypress:run -t 4 -d 'cypress\\e2e' "
   },
   "author": "",
   "license": "ISC",
@@ -15,5 +15,8 @@
     "cypress-dotenv": "^2.0.0",
     "cypress-parallel": "^0.14.0",
     "dotenv": "^16.4.1"
+  },
+  "dependencies": {
+    "uuid": "^9.0.1"
   }
 }
