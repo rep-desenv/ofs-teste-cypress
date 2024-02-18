@@ -11,32 +11,32 @@ module.exports = defineConfig({
       const idUnique = uuidv4()
       
       on('before:run', (details) => {
+        
         if (process.env.SAVE_RESULTS.toLocaleLowerCase() == 'true'){
-
-        for (let index = 0; index < details.specs.length; index++) {                
-            //Tests_Process
-            var dadosTestsProcess = {}
-            dadosTestsProcess.file_name = details.specs[index].fileName
-            dadosTestsProcess.absolute_path = details.specs[index].absolute
-            dadosTestsProcess.created_at = new Date()
-            dadosTestsProcess.id_exec = idUnique
-    
-            fetch('http://localhost:3000/testsprocess', {
-                method: "POST",
-                body: JSON.stringify({
-                  "id_exec": dadosTestsProcess.id_exec,
-                  "file_name": dadosTestsProcess.file_name,
-                  "created_at": dadosTestsProcess.created_at,
-                  "absolute_path": dadosTestsProcess.absolute_path
-                }),
-                headers: {"Content-type": "application/json; charset=UTF-8"}
-              })
-              .then(response => response.json())              
-              .then((json)=>{
-                console.log('executado em tests_process',json) 
-              })          
+          for (let index = 0; index < details.specs.length; index++) {                
+              //Tests_Process
+              var dadosTestsProcess = {}
+              dadosTestsProcess.file_name = details.specs[index].fileName
+              dadosTestsProcess.absolute_path = details.specs[index].absolute
+              dadosTestsProcess.created_at = new Date()
+              dadosTestsProcess.id_exec = idUnique
+      
+              fetch('http://localhost:3000/testsprocess', {
+                  method: "POST",
+                  body: JSON.stringify({
+                    "id_exec": dadosTestsProcess.id_exec,
+                    "file_name": dadosTestsProcess.file_name,
+                    "created_at": dadosTestsProcess.created_at,
+                    "absolute_path": dadosTestsProcess.absolute_path
+                  }),
+                  headers: {"Content-type": "application/json; charset=UTF-8"}
+                })
+                .then(response => response.json())              
+                .then((json)=>{
+                  console.log('executado em tests_process',json) 
+                })          
+          }
         }
-      }
       })
 
 
@@ -101,23 +101,6 @@ module.exports = defineConfig({
                     
                     console.log('executado em detail',json)
                     
-                    // //tests_process.status_process
-                    // fetch(`http://localhost:3000/testsprocess/${idUnique}`, {
-                    //   method: "PUT",
-                    //   body: JSON.stringify({
-                    //     "status_process": 1,
-                    //     "file_name": dadosDetail.file_name
-                    //   }),
-                    //   headers: {"Content-type": "application/json; charset=UTF-8"}
-                    // })
-                    // //.then(response => response.json())              
-                    // // .then((json)=>{
-                    // //   console.log('atualizado em status_process',json) 
-                    // // })
-                    // .then(json => console.log('atualizado em status_process [',1,']'))
-                    // .catch(err => console.log('erro', err))
-
-
                     //Stats
                     var dadosStats = {}
                     dadosStats.duration = results.stats.duration
@@ -212,11 +195,7 @@ module.exports = defineConfig({
                         "file_name": results.spec.fileName
                       }),
                       headers: {"Content-type": "application/json; charset=UTF-8"}                
-                    })
-                    //.then(response => response.json())              
-                    // .then((json)=>{
-                    //   console.log('atualizado em status_process',json) 
-                    // })
+                    })                    
                     .then(json => console.log('atualizado em status_process failures [',reporterDados.failures > 0 ? 2 : 3,']'))
                     .catch(err => console.log('erro', err))                  
 
@@ -240,11 +219,7 @@ module.exports = defineConfig({
             "file_name": spec.fileName
           }),
           headers: {"Content-type": "application/json; charset=UTF-8"}
-        })
-        //.then(response => response.json())              
-        // .then((json)=>{
-        //   console.log('atualizado em status_process',json) 
-        // })
+        })        
         .then(json => console.log('atualizado em status_process [',1,']'))
         .catch(err => console.log('erro', err))
       })
