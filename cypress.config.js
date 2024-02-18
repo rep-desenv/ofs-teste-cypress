@@ -45,22 +45,22 @@ module.exports = defineConfig({
         if (process.env.SAVE_RESULTS.toLocaleLowerCase() == 'true'){ 
 
             //tests_process.status_process
-            for (let index = 0; index < results.runs.length; index++) {
-              fetch(`http://localhost:3000/testsprocess/${idUnique}`, {
-                method: 'PUT',
-                body: JSON.stringify({
-                  "status_process": results.runs[index].reporterStats.failures > 0 ? 2 : 3,
-                  "file_name": results.runs[index].spec.fileName
-                }),
-                headers: {"Content-type": "application/json; charset=UTF-8"}                
-              })
-              //.then(response => response.json())              
-              // .then((json)=>{
-              //   console.log('atualizado em status_process',json) 
-              // })
-              .then(json => console.log('atualizado em status_process [',results.runs[index].reporterStats.failures > 0 ? 2 : 3,']'))
-              .catch(err => console.log('erro', err))
-            }    
+            // for (let index = 0; index < results.runs.length; index++) {
+            //   fetch(`http://localhost:3000/testsprocess/${idUnique}`, {
+            //     method: 'PUT',
+            //     body: JSON.stringify({
+            //       "status_process": results.runs[index].reporterStats.failures > 0 ? 2 : 3,
+            //       "file_name": results.runs[index].spec.fileName
+            //     }),
+            //     headers: {"Content-type": "application/json; charset=UTF-8"}                
+            //   })
+            //   //.then(response => response.json())              
+            //   // .then((json)=>{
+            //   //   console.log('atualizado em status_process',json) 
+            //   // })
+            //   .then(json => console.log('atualizado em status_process [',results.runs[index].reporterStats.failures > 0 ? 2 : 3,']'))
+            //   .catch(err => console.log('erro', err))
+            // }    
 
         }
         
@@ -101,21 +101,22 @@ module.exports = defineConfig({
                     
                     console.log('executado em detail',json)
                     
-                    //tests_process.status_process
-                    fetch(`http://localhost:3000/testsprocess/${idUnique}`, {
-                      method: "PUT",
-                      body: JSON.stringify({
-                        "status_process": 1,
-                        "file_name": dadosDetail.file_name
-                      }),
-                      headers: {"Content-type": "application/json; charset=UTF-8"}
-                    })
-                    //.then(response => response.json())              
-                    // .then((json)=>{
-                    //   console.log('atualizado em status_process',json) 
+                    // //tests_process.status_process
+                    // fetch(`http://localhost:3000/testsprocess/${idUnique}`, {
+                    //   method: "PUT",
+                    //   body: JSON.stringify({
+                    //     "status_process": 1,
+                    //     "file_name": dadosDetail.file_name
+                    //   }),
+                    //   headers: {"Content-type": "application/json; charset=UTF-8"}
                     // })
-                    .then(json => console.log('atualizado em status_process [',1,']'))
-                    .catch(err => console.log('erro', err))
+                    // //.then(response => response.json())              
+                    // // .then((json)=>{
+                    // //   console.log('atualizado em status_process',json) 
+                    // // })
+                    // .then(json => console.log('atualizado em status_process [',1,']'))
+                    // .catch(err => console.log('erro', err))
+
 
                     //Stats
                     var dadosStats = {}
@@ -202,18 +203,51 @@ module.exports = defineConfig({
                     .then(json => console.log('executado em reporter',json))
                     .catch(err => console.log('erro', err))
 
+                    var status_process = reporterDados.failures > 0 ? 3 : 2
+                    
+                    fetch(`http://localhost:3000/testsprocess/${idUnique}`, {
+                      method: 'PUT',
+                      body: JSON.stringify({
+                        "status_process": status_process,
+                        "file_name": results.spec.fileName
+                      }),
+                      headers: {"Content-type": "application/json; charset=UTF-8"}                
+                    })
+                    //.then(response => response.json())              
+                    // .then((json)=>{
+                    //   console.log('atualizado em status_process',json) 
+                    // })
+                    .then(json => console.log('atualizado em status_process failures [',reporterDados.failures > 0 ? 2 : 3,']'))
+                    .catch(err => console.log('erro', err))                  
+
               })
               .catch(err => console.log('erro', err))             
            }
           
       })
   
-      // on('before:spec', (spec, results) => {
-      //   /* ... */
-      //   if (process.env.SAVE_RESULTS.toLocaleLowerCase() == 'true'){
-      //     console.log('$$$$$$$',spec)
-      //   }
-      // })
+      on('before:spec', (spec, results) => {
+        /* ... */
+        // if (process.env.SAVE_RESULTS.toLocaleLowerCase() == 'true'){
+        //   console.log('$$$$$$$',spec)
+        // }
+
+        //tests_process.status_process
+        fetch(`http://localhost:3000/testsprocess/${idUnique}`, {
+          method: "PUT",
+          body: JSON.stringify({
+            "status_process": 1,
+            "file_name": spec.fileName
+          }),
+          headers: {"Content-type": "application/json; charset=UTF-8"}
+        })
+        //.then(response => response.json())              
+        // .then((json)=>{
+        //   console.log('atualizado em status_process',json) 
+        // })
+        .then(json => console.log('atualizado em status_process [',1,']'))
+        .catch(err => console.log('erro', err))
+      })
 
       // implement node event listeners here
       config = dotenvPlugin(config)
