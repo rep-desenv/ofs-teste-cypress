@@ -2,6 +2,7 @@ const { defineConfig } = require("cypress");
 const dotenvPlugin = require('cypress-dotenv');
 require('dotenv').config()
 const {v4:uuidv4 } = require('uuid')
+const moment = require("moment");
 
 module.exports = defineConfig({
   
@@ -13,6 +14,31 @@ module.exports = defineConfig({
       on('before:run', (details) => {
         
         if (process.env.SAVE_RESULTS.toLocaleLowerCase() == 'true'){
+
+          // //Exec => limpo o que tem lá
+          // fetch(`http://localhost:3001/exec/d`, {
+          //             method: 'DELETE',                  
+          //             headers: {"Content-type": "application/json; charset=UTF-8"}                
+          //           })         
+          //           .then(json => console.log('deletando painel'))
+          //           .catch(err => console.log('erro', err))  
+
+          //Exec
+          fetch('http://localhost:3001/exec', {
+            method: "POST",
+            body: JSON.stringify({
+              "id": idUnique,              
+              "created_at": moment().format("YYYY-MM-DD HH:mm:ss"),
+              "status_process": 0
+            }),
+            headers: {"Content-type": "application/json; charset=UTF-8"}
+          })
+          .then(response => response.json())              
+          .then((json)=>{
+            console.log('executado em exec',json) 
+          })
+          .catch(err => console.log('erro', err))
+
           for (let index = 0; index < details.specs.length; index++) {                
               //Tests_Process
               var dadosTestsProcess = {}
@@ -21,7 +47,7 @@ module.exports = defineConfig({
               dadosTestsProcess.created_at = new Date()
               dadosTestsProcess.id_exec = idUnique
       
-              fetch('http://localhost:3000/testsprocess', {
+              fetch('http://localhost:3001/testsprocess', {
                   method: "POST",
                   body: JSON.stringify({
                     "id_exec": dadosTestsProcess.id_exec,
@@ -34,7 +60,8 @@ module.exports = defineConfig({
                 .then(response => response.json())              
                 .then((json)=>{
                   console.log('executado em tests_process',json) 
-                })          
+                })
+                .catch(err => console.log('erro', err))          
           }
         }
       })
@@ -44,23 +71,28 @@ module.exports = defineConfig({
 
         if (process.env.SAVE_RESULTS.toLocaleLowerCase() == 'true'){ 
 
-            //tests_process.status_process
-            // for (let index = 0; index < results.runs.length; index++) {
-            //   fetch(`http://localhost:3000/testsprocess/${idUnique}`, {
-            //     method: 'PUT',
-            //     body: JSON.stringify({
-            //       "status_process": results.runs[index].reporterStats.failures > 0 ? 2 : 3,
-            //       "file_name": results.runs[index].spec.fileName
-            //     }),
-            //     headers: {"Content-type": "application/json; charset=UTF-8"}                
-            //   })
-            //   //.then(response => response.json())              
-            //   // .then((json)=>{
-            //   //   console.log('atualizado em status_process',json) 
-            //   // })
-            //   .then(json => console.log('atualizado em status_process [',results.runs[index].reporterStats.failures > 0 ? 2 : 3,']'))
-            //   .catch(err => console.log('erro', err))
-            // }    
+          fetch(`http://localhost:3001/exec/${idUnique}`, {
+                      method: 'PUT',
+                      body: JSON.stringify({
+                        "status_process": 1
+                      }),
+                      headers: {"Content-type": "application/json; charset=UTF-8"}                
+                    })         
+                    .then(json => console.log('atualizado em exec status_process'))
+                    .catch(err => console.log('erro', err))    
+
+
+
+                    fetch(`http://localhost:3001/exec/d`, {
+                      method: 'PUT',
+                      body: JSON.stringify({
+                        "id": idUnique,
+                        "status_process": 1
+                      }),
+                      headers: {"Content-type": "application/json; charset=UTF-8"}                
+                    })         
+                    .then(json => console.log('realizado dumb do painel'))
+                    .catch(err => console.log('erro', err))    
 
         }
         
@@ -86,7 +118,7 @@ module.exports = defineConfig({
             dadosDetail.created_at = new Date()
             dadosDetail.id_exec = idUnique.toString()
 
-            fetch('http://localhost:3000/detail', {
+            fetch('http://localhost:3001/detail', {
                 method: "POST",
                 body: JSON.stringify({
                   "file_name": dadosDetail.file_name,
@@ -109,7 +141,7 @@ module.exports = defineConfig({
                     dadosStats.qtd_tests = parseInt(results.stats.tests)
                     dadosStats.id_datail = parseInt(json)
 
-                    fetch('http://localhost:3000/stats', {
+                    fetch('http://localhost:3001/stats', {
                         method: "POST",
                         body: JSON.stringify({
                           "duration": dadosStats.duration,
@@ -137,7 +169,7 @@ module.exports = defineConfig({
                             }                
                             dados.id_stats = parseInt(json)
                             
-                            fetch('http://localhost:3000/tests', {
+                            fetch('http://localhost:3001/tests', {
                               method: "POST",
                               body: JSON.stringify({
                                 "state": dados.state,
@@ -167,7 +199,7 @@ module.exports = defineConfig({
                     reporterDados.duration = results.reporterStats.duration
                     reporterDados.id_detail = parseInt(json)
 
-                    fetch('http://localhost:3000/reporter', {
+                    fetch('http://localhost:3001/reporter', {
                           method: "POST",
                           body: JSON.stringify({
                             "suites": reporterDados.suites,
@@ -188,7 +220,7 @@ module.exports = defineConfig({
 
                     var status_process = reporterDados.failures > 0 ? 3 : 2
                     
-                    fetch(`http://localhost:3000/testsprocess/${idUnique}`, {
+                    fetch(`http://localhost:3001/testsprocess/${idUnique}`, {
                       method: 'PUT',
                       body: JSON.stringify({
                         "status_process": status_process,
@@ -212,7 +244,7 @@ module.exports = defineConfig({
         // }
 
         //tests_process.status_process
-        fetch(`http://localhost:3000/testsprocess/${idUnique}`, {
+        fetch(`http://localhost:3001/testsprocess/${idUnique}`, {
           method: "PUT",
           body: JSON.stringify({
             "status_process": 1,
