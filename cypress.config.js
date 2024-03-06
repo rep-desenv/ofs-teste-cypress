@@ -242,18 +242,19 @@ module.exports = defineConfig({
         // if (process.env.SAVE_RESULTS.toLocaleLowerCase() == 'true'){
         //   console.log('$$$$$$$',spec)
         // }
-
-        //tests_process.status_process
-        fetch(`http://localhost:3001/testsprocess/${idUnique}`, {
-          method: "PUT",
-          body: JSON.stringify({
-            "status_process": 1,
-            "file_name": spec.fileName
-          }),
-          headers: {"Content-type": "application/json; charset=UTF-8"}
-        })        
-        .then(json => console.log('atualizado em status_process [',1,']'))
-        .catch(err => console.log('erro', err))
+        if (process.env.SAVE_RESULTS.toLocaleLowerCase() == 'true'){
+            //tests_process.status_process
+            fetch(`http://localhost:3001/testsprocess/${idUnique}`, {
+              method: "PUT",
+              body: JSON.stringify({
+                "status_process": 1,
+                "file_name": spec.fileName
+              }),
+              headers: {"Content-type": "application/json; charset=UTF-8"}
+            })        
+            .then(json => console.log('atualizado em status_process [',1,']'))
+            .catch(err => console.log('erro', err))
+        }
       })
 
       // implement node event listeners here
