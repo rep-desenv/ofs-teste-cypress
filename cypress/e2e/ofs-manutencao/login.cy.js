@@ -2,17 +2,17 @@
 
 context('Login',() => {
 
-    Cypress.config('experimentalSessionSupport', true)
-    Cypress.session.clearAllSavedSessions()
+    //Cypress.config('experimentalSessionSupport', true)
+    //Cypress.session.clearAllSavedSessions()
 
-    const usuario = Cypress.env('USUARIO')
-    const senha = Cypress.env('SENHA')
+    // const usuario = Cypress.env('USUARIO')
+    // const senha = Cypress.env('SENHA')
 
-    beforeEach(() => {              
-        // cy.visit('https://equatorialenergia2.test.etadirect.com/')  
-        // cy.wait(2000)
-        // cy.get('#welcome-message').should('contain.text','Bem-vindo a equatorialenergia2.test')
-    })
+    // beforeEach(() => {              
+    //     // cy.visit('https://equatorialenergia2.test.etadirect.com/')  
+    //     // cy.wait(2000)
+    //     // cy.get('#welcome-message').should('contain.text','Bem-vindo a equatorialenergia2.test')
+    // })
 
     const visitUrl = () => {
         cy.visit('https://equatorialenergia2.test.etadirect.com/')  
@@ -54,6 +54,8 @@ context('Login',() => {
         //Clicar no botão conectar
         cy.get('#sign-in').click()
 
+        cy.wait(3000)
+
         //Realizar o acesso ao sistema, sendo permitido realizar a gestão dos recursos de campo.
         cy.get('.page-header-back-button > .app-button > .app-button-icon').should('exist')
         cy.get('.page-header-back-button > .app-button > .app-button-icon').click()
@@ -85,6 +87,8 @@ context('Login',() => {
 
         //Clicar no botão conectar
         cy.get('#sign-in').click()
+
+        cy.wait(3000)
 
         //Realizar o acesso ao sistema, sendo permitido realizar a gestão dos recursos de campo.
         cy.get('.page-header-back-button > .app-button > .app-button-icon').should('exist')
@@ -155,7 +159,7 @@ context('Login',() => {
     });
 
 
-    it.only('Verificar se ocorre o bloqueio do acesso.', () => {
+    it('Verificar se ocorre o bloqueio do acesso.', () => {
 
         visitUrl()
 
@@ -164,11 +168,14 @@ context('Login',() => {
             cy.get('#username').type(user.username)
         })    
 
-        for (let i = 0; i < 4; i++) {  
+        for (let i = 0; i < 2; i++) {  
             //Digite a {senha} no campo Senha
             cy.get('#password').type('123') 
             cy.get('#sign-in').click()          
         }
+
+        // //Clicar no botão conectar
+        // cy.get('#sign-in').click()
         
 
         // //Digite o {idUsuario} no camo Nome de Usuário 
@@ -182,22 +189,65 @@ context('Login',() => {
         
     });
 
-    afterEach(() => {
-        // cy.wait(5000)
-        // cy.get('button.user-menu').should('exist')
-        // cy.get('button.user-menu').click()        
-        // cy.get('[pos="2"] > .item-link').click()        
-        // cy.get('#welcome-message').should('contain.text','Bem-vindo a equatorialenergia2.test')
-        // cy.wait(5000)
-        // cy.get('button.user-menu')
-        // .should('exist')
-        // .then((logoff) => {
-        //     if(logoff) {
-        //         cy.get('button.user-menu').click()        
-        //         cy.get('[pos="2"] > .item-link').click()        
-        //         cy.get('#welcome-message').should('contain.text','Bem-vindo a equatorialenergia2.test')
-        //     }
-        // })
-    })
+    it('Ativação de Rota.', () => {
+        visitUrl()
+
+        cy.fixture('user_tecnico').then(user => {
+            //Digite o {idUsuario} no camo Nome de Usuário 
+            cy.get('#username').type(user.username)
+
+            //Digite a {senha} no campo Senha
+            cy.get('#password').type(user.passw)
+        })
+        
+        //Clicar no botão conectar
+        cy.get('#sign-in').click()
+
+        cy.wait(5000)
+
+        //Realizar o acesso ao sistema, sendo permitido realizar a gestão dos recursos de campo.
+        cy.get('.page-header-back-button > .app-button > .app-button-icon').should('exist')
+        cy.get('.page-header-back-button > .app-button > .app-button-icon').click()
+        // cy.wait(1000)
+        // cy.get('.global-navigation-item--myRoute').should('exist')        
+        // cy.get('.global-navigation-item--myRoute').click()
+        cy.wait(2000)
+        cy.get("a[title='Minha Rota']").should('contain.text','Minha Rota')
+        cy.get("a[title='Minha Rota']").click()
+        cy.wait(1000)
+        cy.get(':nth-child(4) > .tile-item > .base-info > .icon').click()
+        cy.wait(1000)
+        cy.get('.form-text-field').clear()
+        cy.get('.form-text-field').type('teste')
+        cy.get('.submit-line-links > .submit').click()
+        cy.wait(2000)
+        cy.get('#current-activity-action').click()
+        cy.wait(1000)
+        cy.get('.submit-line-links > .submit').click()
+        cy.wait(1000)
+        cy.get('#current-activity-action').should('exist')
+        cy.wait(1000)
+
+        logOff()
+
+    });
+
+    // afterEach(() => {
+    //     // cy.wait(5000)
+    //     // cy.get('button.user-menu').should('exist')
+    //     // cy.get('button.user-menu').click()        
+    //     // cy.get('[pos="2"] > .item-link').click()        
+    //     // cy.get('#welcome-message').should('contain.text','Bem-vindo a equatorialenergia2.test')
+    //     // cy.wait(5000)
+    //     // cy.get('button.user-menu')
+    //     // .should('exist')
+    //     // .then((logoff) => {
+    //     //     if(logoff) {
+    //     //         cy.get('button.user-menu').click()        
+    //     //         cy.get('[pos="2"] > .item-link').click()        
+    //     //         cy.get('#welcome-message').should('contain.text','Bem-vindo a equatorialenergia2.test')
+    //     //     }
+    //     // })
+    // })
 })
 
